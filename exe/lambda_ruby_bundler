@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'lambda_ruby_bundler'
+require 'lambda_ruby_bundler/cli/option_parser'
+
+options = LambdaRubyBundler::CLI::OptionParser.new.parse!(ARGV)
+executor = LambdaRubyBundler::Executor.new(
+  options[:root_path], options[:app_path]
+)
+
+result = executor.run
+
+File.open(options[:output_path], 'wb+') do |file|
+  file.write(result.read)
+end
