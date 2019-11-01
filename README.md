@@ -1,8 +1,8 @@
 # LambdaRubyBundler
 
-LambdaRubyBundler is a command line tool for packaging Ruby applications for AWS Lambda.
+LambdaRubyBundler is a command-line tool for packaging Ruby applications for AWS Lambda.
 
-Most notably, it properly compiles dependencies with C extensions, using custom Docker image based on [lambci/lambda:build-ruby2.5](https://hub.docker.com/r/lambci/lambda/tags).
+Most notably, it properly compiles dependencies with C extensions, using a custom Docker image based on [lambci/lambda:build-ruby2.5](https://hub.docker.com/r/lambci/lambda/tags).
 
 ## Installation
 
@@ -24,7 +24,7 @@ Or install it yourself as:
 
 Note that the library requires running Docker on your system!
 
-Let's assume following directory structure:
+Let's assume the following directory structure:
 
 ```
 /tmp/my_serverless_app
@@ -46,7 +46,7 @@ lambda_ruby_bundler \
   --out /tmp/build.zip
 ```
 
-It will produce a ZIP file with following files:
+It will produce a ZIP file with the following files:
 
 ```
 ├ handler.rb
@@ -55,7 +55,7 @@ It will produce a ZIP file with following files:
 
 Note that:
 
-1. Structure will be "flattened" (based on contents of the `--app-path`)
+1. The structure will be "flattened" (based on contents of the `--app-path`)
 2. Only gems **not in** development and test groups will be bundled
 3. The first run might be very long. It requires pulling the base image, building Bundler image, fetching and building gems for your application
 
@@ -70,6 +70,14 @@ executor = LambdaRubyBundler::Executor.new(
 File.write('bundle.zip', executor.run.read)
 ```
 
+### Ruby versions
+
+Currently, Lambda supports only Ruby 2.5 environment - specifically, `2.5.5`. At the moment of writing this Readme, newest version from `2.5.x` family is `2.5.7`.
+
+Your application is expected to work properly on Ruby 2.5.5, but the `LambdaRubyBundler` does not verify it in any way. To ease the development of the application, the `ruby` entry from Gemfile will be removed while bundling gems, allowing you to develop your application with any ruby version.
+
+Note that it is still best to use a version from Ruby 2.5.x family - other versions might be packaged successfully, but might not work when deployed to Lambda!
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -82,7 +90,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/td-ber
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
 ## Code of Conduct
 

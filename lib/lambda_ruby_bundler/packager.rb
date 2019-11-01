@@ -20,7 +20,7 @@ def bundle_install(*additional_options)
   ].join(' ')
 end
 
-RUBY_ENTRY_REGEX = /\A\s*ruby ("|')\d+\.\d+\.\d+("|')\s*\z/.freeze
+RUBY_ENTRY_REGEX = /\A\s*ruby\s+("|')\d+\.\d+\.\d+("|')\s*\z/.freeze
 
 # Copy Gemfile and Gemfile.lock to the workspace
 FileUtils.cp('/app/Gemfile', '/workspace/Gemfile')
