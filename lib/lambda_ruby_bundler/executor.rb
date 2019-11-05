@@ -46,8 +46,9 @@ module LambdaRubyBundler
     # @return [StringIO] IO containing contents of the ZIP
     def run
       zipped_contents, = container.run.tap { container.destroy }
+      contents = JSON.parse(zipped_contents.join)
 
-      StringIO.new(zipped_contents.join)
+      StringIO.new(Base64.strict_decode64(contents['application_bundle']))
     end
 
     private

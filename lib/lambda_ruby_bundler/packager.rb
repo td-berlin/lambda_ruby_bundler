@@ -5,6 +5,7 @@
 
 require 'fileutils'
 require 'json'
+require 'base64'
 
 APPLICATION_DIRECTORY, = ARGV
 
@@ -47,4 +48,7 @@ FileUtils.cp_r(contents, '/workspace/build')
 # Zip the contents and print
 silent('cd /workspace/build && zip -r /tmp/out.zip .')
 
-exec('cat /tmp/out.zip')
+# Read and serialize the resulting ZIP
+serialized_app_bundle = Base64.strict_encode64(File.read('/tmp/out.zip'))
+
+puts({ application_bundle: serialized_app_bundle }.to_json)
