@@ -6,11 +6,15 @@ require 'lambda_ruby_bundler/cli/option_parser'
 
 options = LambdaRubyBundler::CLI::OptionParser.new.parse!(ARGV)
 executor = LambdaRubyBundler::Executor.new(
-  options[:root_path], options[:app_path]
+  options[:root_path], options[:app_path], options[:build_dependencies]
 )
 
 result = executor.run
 
 File.open(options[:output_path], 'wb+') do |file|
-  file.write(result.read)
+  file.write(result[:application_bundle].read)
+end
+
+File.open(options[:dependencies_path], 'wb+') do |file|
+  file.write(result[:dependency_layer].read)
 end

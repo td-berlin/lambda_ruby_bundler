@@ -4,37 +4,38 @@ RSpec.describe LambdaRubyBundler::Executor do
   describe '#run' do
     subject(:run) { executor.run }
 
-    let(:entries) do
-      stream = Zip::InputStream.new(run)
-      entry = nil
+    let(:build_dependencies) { true }
 
-      [].tap do |entries|
-        entries << entry.name while (entry = stream.get_next_entry)
+    let(:extractor) do
+      proc do |io|
+        stream = Zip::InputStream.new(io)
+        entry = nil
+
+        [].tap do |entries|
+          entries << entry.name while (entry = stream.get_next_entry)
+        end
       end
+    end
+
+    let(:application_bundle_entries) do
+      extractor.call(run[:application_bundle])
+    end
+
+    let(:dependency_layer_entries) do
+      extractor.call(run[:dependency_layer])
     end
 
     context 'when application has no runtime dependencies' do
       include_context 'with application', :no_deps
 
-      it 'contains application files' do
-        expect(entries).to include('app.rb', 'Gemfile', 'Gemfile.lock')
-      end
-
-      it 'does not bundle any gems' do
-        expect(entries).to_not include match(/gems/)
-      end
+      it_behaves_like 'application bundler', %w[app.rb Gemfile Gemfile.lock], []
     end
 
     context 'when application has dependency without native extensions' do
       include_context 'with application', :regular_dep
 
-      it 'contains application files' do
-        expect(entries).to include('default_handler.rb')
-      end
-
-      it 'bundles production gem' do
-        expect(entries).to include match(%r{gems/rake-13.0.0})
-      end
+      it_behaves_like 'application bundler',
+                      %w[default_handler.rb], [%r{gems/rake-13.0.0}]
     end
 
     context 'when application has dependency with native extensions' do
@@ -45,16 +46,12 @@ RSpec.describe LambdaRubyBundler::Executor do
           'jaro_winkler-1.5.4/jaro_winkler/jaro_winkler_ext.so'
       end
 
-      it 'contains application files' do
-        expect(entries).to include('default_handler.rb')
-      end
-
-      it 'bundles production gem' do
-        expect(entries).to include match(%r{gems/jaro_winkler-1.5.4})
-      end
+      it_behaves_like 'application bundler',
+                      %w[default_handler.rb], [%r{gems/jaro_winkler-1.5.4}]
 
       it 'builds extension' do
-        expect(entries).to include match(/#{extension_library_name}/)
+        expect(dependency_layer_entries)
+          .to include match(/#{extension_library_name}/)
       end
     end
   end

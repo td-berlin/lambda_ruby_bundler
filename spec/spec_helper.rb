@@ -8,6 +8,7 @@ require 'lambda_ruby_bundler'
 require 'zip'
 
 require 'support/shared_contexts/application'
+require 'support/shared_examples/application_bundler'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

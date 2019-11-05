@@ -9,26 +9,48 @@ module LambdaRubyBundler
     class OptionParser < ::OptionParser
       attr_reader :options
 
-      def initialize
-        @options = {
-          root_path: Dir.pwd,
-          app_path: '.',
-          output_path: 'build.zip'
-        }
+      OPTIONS = %i[
+        root_path_option
+        app_path_option
+        output_option
+        no_dependencies_option
+        dependencies_path_option
+      ].freeze
 
-        super do |builder|
-          root_path_option(builder)
-          app_path_option(builder)
-          output_option(builder)
-        end
+      def initialize
+        @options = defaults
+
+        super { |builder| OPTIONS.each { |option| send(option, builder) } }
       end
 
       def parse!(*)
         super
+
+        options[:dependencies_path] ||= build_default_dependencies_path(
+          options[:output_path]
+        )
+
         options
       end
 
       private
+
+      def defaults
+        {
+          root_path: Dir.pwd,
+          app_path: '.',
+          build_dependencies: true,
+          dependencies_path: nil,
+          output_path: 'build.zip'
+        }
+      end
+
+      def build_default_dependencies_path(output_path)
+        File.join(
+          File.dirname(output_path),
+          [File.basename(output_path, '.*'), 'dependencies.zip'].join('-')
+        )
+      end
 
       def root_path_option(builder)
         builder.on(
@@ -55,6 +77,23 @@ module LambdaRubyBundler
           'Sets output path, to which the ZIP with the bundled code ' \
           'will be saved',
           &assign_option(:output_path)
+        )
+      end
+
+      def no_dependencies_option(builder)
+        builder.on(
+          '--no-dependencies', 'Prevents building dependency layer'
+        ) do |option|
+          options[:build_dependencies] = option
+        end
+      end
+
+      def dependencies_path_option(builder)
+        builder.on(
+          '--dependencies-path=APP_PATH',
+          'Sets path for the dependencies layer package (defaults to ' \
+          '{OUT_PATH}-dependencies.zip)',
+          &assign_option(:dependencies_path)
         )
       end
 
