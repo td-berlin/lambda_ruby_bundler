@@ -14,6 +14,8 @@ RSpec.shared_context 'with application' do |application_name|
     File.expand_path(File.join('..', 'apps', application_name.to_s), __dir__)
   end
 
+  let(:build_dependencies) { true }
+
   let(:executor) do
     LambdaRubyBundler::Executor.new(root_path, app_path, build_dependencies)
   end

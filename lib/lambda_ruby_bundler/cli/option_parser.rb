@@ -15,6 +15,7 @@ module LambdaRubyBundler
         output_option
         no_dependencies_option
         dependencies_path_option
+        cache_dir_option
       ].freeze
 
       def initialize
@@ -41,7 +42,8 @@ module LambdaRubyBundler
           app_path: '.',
           build_dependencies: true,
           dependencies_path: nil,
-          output_path: 'build.zip'
+          output_path: 'build.zip',
+          cache_dir: nil
         }
       end
 
@@ -94,6 +96,15 @@ module LambdaRubyBundler
           'Sets path for the dependencies layer package (defaults to ' \
           '{OUT_PATH}-dependencies.zip)',
           &assign_option(:dependencies_path)
+        )
+      end
+
+      def cache_dir_option(builder)
+        builder.on(
+          '--cache-dir=CACHE_DIR',
+          'Enables Cache Mode and uses chosen directory as target directory ' \
+          'for the builds.',
+          &assign_option(:cache_dir)
         )
       end
 

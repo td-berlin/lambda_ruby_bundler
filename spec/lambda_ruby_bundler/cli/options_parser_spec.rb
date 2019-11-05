@@ -17,7 +17,8 @@ RSpec.describe LambdaRubyBundler::CLI::OptionParser do
           app_path: '.',
           output_path: 'build.zip',
           build_dependencies: true,
-          dependencies_path: './build-dependencies.zip'
+          dependencies_path: './build-dependencies.zip',
+          cache_dir: nil
         }
       end
 
@@ -35,7 +36,9 @@ RSpec.describe LambdaRubyBundler::CLI::OptionParser do
           '/tmp/build.zip',
           '--no-dependencies',
           '--dependencies-path',
-          '/tmp/deps.zip'
+          '/tmp/deps.zip',
+          '--cache_dir',
+          'tmp'
         ]
       end
 
@@ -45,7 +48,8 @@ RSpec.describe LambdaRubyBundler::CLI::OptionParser do
           app_path: 'code',
           output_path: '/tmp/build.zip',
           build_dependencies: false,
-          dependencies_path: '/tmp/deps.zip'
+          dependencies_path: '/tmp/deps.zip',
+          cache_dir: 'tmp'
         }
       end
 
