@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'lambda_ruby_bundler/cli/option_parser'
-
 RSpec.describe LambdaRubyBundler::CLI::OptionParser do
   let(:options_parser) { described_class.new }
 

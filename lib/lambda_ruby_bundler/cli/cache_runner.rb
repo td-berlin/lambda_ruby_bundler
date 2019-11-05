@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-require 'digest'
-
-require 'lambda_ruby_bundler/executor'
-
 module LambdaRubyBundler
   module CLI
     # Runs the executor in Cache Mode.
-    class CacheRunner
+    class CacheRunner < BaseRunner
       MD5_EXTRACT_REGEX = /build(?:dep)?-([a-f0-9]{32}).zip/.freeze
 
-      attr_reader :root_path, :app_path, :cache_dir
+      attr_reader :cache_dir
 
       # Creates new instance of cache runner.
       #
@@ -21,8 +17,7 @@ module LambdaRubyBundler
       # @param [String]
       #   cache_dir Directory containing cached builds
       def initialize(root_path, app_path, cache_dir)
-        @root_path = root_path
-        @app_path = app_path
+        super(root_path, app_path)
         @cache_dir = cache_dir
       end
 
@@ -51,23 +46,6 @@ module LambdaRubyBundler
         end
       end
 
-      def bundle(build_dependencies)
-        executor = LambdaRubyBundler::Executor.new(
-          root_path, app_path, build_dependencies
-        )
-
-        result = executor.run
-
-        save(result[:application_bundle], paths[:application_bundle])
-        return unless build_dependencies
-
-        save(result[:dependency_layer], paths[:dependency_layer])
-      end
-
-      def save(io, path)
-        File.open(path, 'wb+') { |file| file.write(io.read) }
-      end
-
       def paths
         @paths ||= {
           application_bundle:
@@ -82,7 +60,9 @@ module LambdaRubyBundler
           files = Dir[File.join(root_path, app_path, '**', '*')]
           digest = Digest::MD5.new
 
-          files.each { |file| digest << File.read(file) }
+          files.each do |file|
+            digest << File.read(file) if File.file?(file)
+          end
 
           digest.hexdigest
         end

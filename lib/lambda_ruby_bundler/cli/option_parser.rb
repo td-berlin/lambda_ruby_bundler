@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'optparse'
-
 module LambdaRubyBundler
   module CLI
     # Custom OptionParser which collects user-supplied options about the build.

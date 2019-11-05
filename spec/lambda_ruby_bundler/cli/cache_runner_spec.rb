@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'lambda_ruby_bundler/cli/cache_runner'
-
 RSpec.describe LambdaRubyBundler::CLI::CacheRunner do
   include_context 'with application', :regular_dep
 
@@ -24,7 +22,7 @@ RSpec.describe LambdaRubyBundler::CLI::CacheRunner do
       it 'creates two bundles' do
         expect { run }
           .to change { Dir.chdir(cache_dir) { Dir['*.zip'] } }
-          .to expected_files
+          .to match_array(expected_files)
       end
     end
 

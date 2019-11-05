@@ -83,6 +83,21 @@ File.write('bundle.zip', result[:application_bundle].read)
 File.write('dependencies.zip', result[:dependency_layer].read)
 ```
 
+### Cache mode
+
+The gem can also automatically assign build paths and cache them. To use Cache Mode, simply use `--cache-dir` option in CLI usage or use `LambdaRubyBundler::CLI::CacheRunner` class to generate the bundles.
+
+```bash
+lambda_ruby_bundler --app-path backend --cache-dir tmp
+```
+
+```ruby
+runner = LambdaRubyBundler::CLI::CacheRunner.new(Dir.pwd, 'backend', 'tmp')
+runner.run
+```
+
+This will save the bundles in cache directory and will output the paths to STDOUT (CLI case) or return them as Hash (programmatic usage).
+
 ### Ruby versions
 
 Currently, Lambda supports only Ruby 2.5 environment - specifically, `2.5.5`. At the moment of writing this Readme, newest version from `2.5.x` family is `2.5.7`.
