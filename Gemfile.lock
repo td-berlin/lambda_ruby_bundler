@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lambda_ruby_bundler (1.0.0.pre)
+    lambda_ruby_bundler (1.0.0)
       docker-api
 
 GEM
