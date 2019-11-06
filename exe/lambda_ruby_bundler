@@ -2,15 +2,21 @@
 # frozen_string_literal: true
 
 require 'lambda_ruby_bundler'
-require 'lambda_ruby_bundler/cli/option_parser'
 
 options = LambdaRubyBundler::CLI::OptionParser.new.parse!(ARGV)
-executor = LambdaRubyBundler::Executor.new(
-  options[:root_path], options[:app_path]
-)
 
-result = executor.run
+runner = if options[:cache_dir]
+           LambdaRubyBundler::CLI::CacheRunner.new(
+             options[:root_path], options[:app_path], options[:cache_dir]
+           )
+         else
+           LambdaRubyBundler::CLI::StandardRunner.new(
+             options[:root_path],
+             options[:app_path],
+             options[:build_dependencies],
+             application_bundle: options[:output_path],
+             dependency_layer: options[:dependencies_path]
+           )
+         end
 
-File.open(options[:output_path], 'wb+') do |file|
-  file.write(result.read)
-end
+puts runner.run.to_json

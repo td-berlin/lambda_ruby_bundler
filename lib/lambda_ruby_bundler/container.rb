@@ -5,12 +5,13 @@ module LambdaRubyBundler
   # bundler containers.
   # @api private
   class Container
-    attr_reader :root_path, :app_path, :volume
+    attr_reader :root_path, :app_path, :volume, :build_dependencies
 
-    def initialize(root_path, app_path, volume)
+    def initialize(root_path, app_path, volume, build_dependencies)
       @root_path = root_path
       @app_path = app_path
       @volume = volume
+      @build_dependencies = build_dependencies
     end
 
     def run(timeout: 120)
@@ -31,7 +32,7 @@ module LambdaRubyBundler
     end
 
     def container_arguments
-      { 'Cmd' => [app_path],
+      { 'Cmd' => [app_path, build_dependencies ? 'use-deps' : 'no-deps'],
         'Image' => Image.instance.id,
         'HostConfig' => {
           'AutoRemove' => true,
