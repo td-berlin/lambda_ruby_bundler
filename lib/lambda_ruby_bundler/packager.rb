@@ -45,8 +45,15 @@ if BUNDLE_DEPS
   # Clean unused gems
   silent('bundle clean')
 
+  # Create proper structure for AWS Layer
+  FileUtils.mkdir_p('/tmp/layer/ruby/gems')
+  FileUtils.symlink(
+    '/workspace/build/vendor/bundle/ruby/2.5.0',
+    '/tmp/layer/ruby/gems/2.5.0'
+  )
+
   # Zip the dependencies
-  silent('cd /workspace/build/vendor/bundle && zip -r /tmp/dependencies.zip .')
+  silent('cd /tmp/layer && zip -r /tmp/dependencies.zip .')
 
   # Add serialized ZIP to result
   content = File.read('/tmp/dependencies.zip')

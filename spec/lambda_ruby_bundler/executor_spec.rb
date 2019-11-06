@@ -35,7 +35,8 @@ RSpec.describe LambdaRubyBundler::Executor do
       include_context 'with application', :regular_dep
 
       it_behaves_like 'application bundler',
-                      %w[default_handler.rb], [%r{gems/rake-13.0.0}]
+                      %w[default_handler.rb],
+                      [%r{ruby/gems/2\.5\.0/gems/rake-13.0.0}]
     end
 
     context 'when application has dependency with native extensions' do
@@ -47,7 +48,8 @@ RSpec.describe LambdaRubyBundler::Executor do
       end
 
       it_behaves_like 'application bundler',
-                      %w[default_handler.rb], [%r{gems/jaro_winkler-1.5.4}]
+                      %w[default_handler.rb],
+                      [%r{ruby/gems/2\.5\.0/gems/jaro_winkler-1.5.4}]
 
       it 'builds extension' do
         expect(dependency_layer_entries)
