@@ -16,7 +16,7 @@ GEM
       multi_json
     excon (0.68.0)
     jaro_winkler (1.5.4)
-    json (2.2.0)
+    json (2.3.1)
     method_source (0.9.2)
     multi_json (1.14.1)
     parallel (1.18.0)
